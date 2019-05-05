@@ -9,15 +9,7 @@ class TodoController extends Controller
 {
     public function index()
     {
-        return DataTables::of(Todo::query()->orderBy('id' , 'desc'))
-            ->addColumn('action', function(Todo $todo) {
-                return '<a href="#" data-toggle="modal" data-target="#editModal" onclick="edit('.$todo->id.')"  class="btn btn-primary">Edit</a> <a href="'.route("delete" , $todo->id).'" class="btn btn-danger">Move to Trash</a>';
-            })
-            ->rawColumns(['action'])
-            ->setRowId(function (Todo $todo) {
-                return $todo->id;
-            })
-            ->make(true);
+        return $this->getRecords();
     }
     public function store(Request $request)
     {
@@ -42,6 +34,17 @@ class TodoController extends Controller
         if($todo->update($data)) {
             return redirect()->route('todo.index');
         }
+    }
+    private function getRecords(){
+        return DataTables::of(Todo::query()->orderBy('id' , 'desc'))
+            ->addColumn('action', function(Todo $todo) {
+                return '<a href="#" data-toggle="modal" data-target="#editModal" onclick="edit('.$todo->id.')"  class="btn btn-primary">Edit</a> <a href="'.route("delete" , $todo->id).'" class="btn btn-danger">Move to Trash</a>';
+            })
+            ->rawColumns(['action'])
+            ->setRowId(function (Todo $todo) {
+                return $todo->id;
+            })
+            ->make(true);
     }
     public function getTrash()
     {
